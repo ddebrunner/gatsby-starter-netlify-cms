@@ -93,16 +93,15 @@ fragment TypeRef on __Type {
 `;
 
 import GraphqlBirdseye from "graphql-birdseye";
-import { smallSchema /** bigSchema */ as dummySchema } from "./dummySchema";
+// import { smallSchema /** bigSchema */ as dummySchema } from "./dummySchema";
 
 import fetch from "isomorphic-fetch";
 
 function introspectionProvider(query) {
-  return fetch("https://danville.stepzen.net/stepzen101/ecommerce/__graphql", {
+  return fetch("/.netlify/functions/gql", {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "apikey SOME KEY", // TEMP
     },
     body: JSON.stringify({ query: query }),
   }).then((response) => response.json());
@@ -116,12 +115,11 @@ class App extends React.Component<any> {
     };
   }
   componentDidMount() {
-    console.log("DDDD:componentDidMount");
+    var q = IntrospectionQuery.replace(/(\r\n|\n|\r)/gm, " ");
+    console.log(q);
     const fetchSchema = async () => {
-      const response = await introspectionProvider(IntrospectionQuery);
+      const response = await introspectionProvider(q);
       this.setState({ gqlschema: response.data });
-      console.log("DDD: Setting:state");
-      console.log(response);
     };
     fetchSchema();
   }
@@ -141,5 +139,3 @@ class App extends React.Component<any> {
 }
 
 export default () => <App />;
-
-// </React.Fragment>render(, document.getElementById("gqlv"));
