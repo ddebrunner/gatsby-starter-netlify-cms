@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render } from "react-dom";
+import ReactDOM from "react-dom";
 
 const IntrospectionQuery = `
 query IntrospectionQuery {
@@ -92,10 +92,11 @@ fragment TypeRef on __Type {
 }
 `;
 
-import GraphqlBirdseye from "graphql-birdseye";
+//import GraphqlBirdseye from "graphql-birdseye";
 // import { smallSchema /** bigSchema */ as dummySchema } from "./dummySchema";
 
 import fetch from "isomorphic-fetch";
+import { asyncComponent } from "react-async-component";
 
 function introspectionProvider(query) {
   return fetch("/.netlify/functions/gql", {
@@ -106,6 +107,12 @@ function introspectionProvider(query) {
     body: JSON.stringify({ query: query }),
   }).then((response) => response.json());
 }
+
+const GraphqlBirdseye = asyncComponent({
+  resolve: () => require("graphql-birdseye"),
+  LoadingComponent: () => <div />, // Optional
+  ErrorComponent: () => <div>Uh oh..</div>, // Optional
+});
 
 class App extends React.Component<any> {
   constructor(props) {
@@ -120,6 +127,19 @@ class App extends React.Component<any> {
     const fetchSchema = async () => {
       const response = await introspectionProvider(q);
       this.setState({ gqlschema: response.data });
+      /*
+      import("graphql-birdseye").then((gbe) => {
+        console.log("RENDER BIRDSEYE GOT HERE");
+        ReactDOM.render(
+          <GraphqlBirdseye
+            introspectionQuery={response.data}
+            style={{ height: "100vh" }}
+          />,
+          document.body
+        );
+        
+      });
+      */
     };
     fetchSchema();
   }
