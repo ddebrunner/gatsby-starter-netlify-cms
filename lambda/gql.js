@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 exports.handler = async (event, context) => {
   /* Reading the context.clientContext will give us the current user */
-  /*
+
   const claims = context.clientContext && context.clientContext.user;
   console.log("User claims", claims);
   if (!claims) {
@@ -14,7 +14,7 @@ exports.handler = async (event, context) => {
         data: "NOT ALLOWED",
       }),
     };
-  }*/
+  }
   // Only allow POST
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
